@@ -1,0 +1,15 @@
+
+=======================================
+ASEN 5519 ALGORITHMIC MOTION PLANNING 
+HOMEWORK 2
+JOE MICELI
+=======================================
+
+Valid Solutions for Problem 3b:
+- Format is [theta1, theta2, theta3]
+	- Where theta1 is the angle of the first link
+	- theta2 is the angle of the second link
+	- theta3 is the angle of the 3rd link
+-Values shown are in degrees
+
+Valid_Solutions = [[12, 219, 237], [18, 81, 126], [37, 74, 136], [41, 73, 138], [66, 73, 149], [66, 246, 211], [69, 74, 150], [76, 256, 208], [81, 81, 153], [99, 279, 207], [104, 104, 152], [111, 286, 210], [114, 114, 149], [114, 287, 211], [139, 287, 222], [143, 286, 224], [162, 279, 234], [168, 141, 123], [208, 256, 256], [228, 246, 263], [231, 141, 96], [309, 219, 264], [312, 114, 97], [332, 104, 104]]
