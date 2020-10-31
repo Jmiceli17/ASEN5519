@@ -23,3 +23,20 @@ RUNNING THE CODE:
 	$ python 3LinkManipulator_fwd.py
 - Syntax for 3LinkManipulator_reverse.py
 	$ python 3LinkManipulator_reverse.py
+
+
+
+
+EDIT (12/10/2020): SUBMISSION OF PROBLEM 8
+- I am resubmitting the code of this assignment to include my work for Probem 8
+- I used eclipse and it's internal tool chain to build this and unfortunately, could not get it to run outside of eclipse
+- The code is included in this submission
+- Plots from parts a,b, and c are included as well in code\Exercise8\solutions
+- File Descriptions (in \code\Exercise8\src):
+	- *.hpp and *.cpp are the source files for c_space constructor
+	- c_space.csv is the log file containing the set of comma separated c-space coordinates of each discretized obstacle
+	- workspace.csv is the log file contianing the set of comma separated workspace coordinates of each discretized obstacle
+	- plot_spaces.py will generate plots of both the workspace and c-space using the .csv log files
+	- Remaining files and directories are artifacts from the eclipse IDE
+
+

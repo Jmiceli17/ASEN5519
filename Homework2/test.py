@@ -1,10 +1,29 @@
 import numpy as np
 # Convex hull of a random set of points:
 
+# obs = np.array([[0,0], [1,2], [0,2]])
+
+# # robot has same shape as obstacle
+# neg_A = np.array([[-1,-2],[0,-2],[0,0]])
+
+# two squares
+#obs = np.array([[0,0], [0,1], [1,1], [1,0]])
+
+# # robot has same shape as obstacle
+# neg_A = np.array([[-1,-1], [-1,0], [0,0], [0,-1]])
+
+# #Two triangles
+# obs = np.array([[0,1], [0,-1], [1,0]])
+
+# # robot has same shape as obstacle
+# neg_A = np.array([[-1,-1], [-1,0], [0,0], [0,-1]])
+
+
 obs = np.array([[0,0], [1,2], [0,2]])
 
 # robot has same shape as obstacle
 neg_A = np.array([[-1,-2],[0,-2],[0,0]])
+# neg_A = np.array([[0,0], [1,2], [0,2]])
 
 points = np.empty((0,2),float)
 print(points)

@@ -19,7 +19,7 @@ def getAngle(v1, v2):
 		print('divide by zero')
 		return(1)
 	theta = np.arccos(np.dot(line_of_sight, [1,0])/(LA.norm(line_of_sight)*LA.norm([1,0])) ) 
-	theta = theta * 180/np.pi
+	#theta = theta * 180/np.pi
 	# print(theta) 
 	return theta
 
@@ -72,6 +72,10 @@ def c_space_plot(c_space_obs):
 
 	plt.grid(color = 'b', linestyle = '-', linewidth = 1)
 	plt.show()
+
+
+# def test_sum(A, B):
+# 	for 
 
 
 if __name__ == "__main__":
