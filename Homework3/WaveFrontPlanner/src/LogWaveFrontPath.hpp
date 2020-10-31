@@ -16,7 +16,9 @@
 
 using namespace std;
 
-void LogWaveFrontPath(std::vector<WaveFrontCell> &path);
+//void LogWaveFrontPath(std::vector<WaveFrontCell> &path);
+void LogWaveFrontPath(std::vector<std::vector<double>> path);
+
 
 
 

@@ -30,7 +30,7 @@
 using namespace std;
 
 
-void LabelGoalCell(std::vector<WaveFrontCell> &grid_cells, std::vector<double> q_goal);
+void LabelGoalCell(std::vector<WaveFrontCell> *grid_cells, std::vector<double> q_goal);
 
 
 

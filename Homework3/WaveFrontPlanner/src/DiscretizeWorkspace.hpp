@@ -32,7 +32,7 @@ using namespace std;
 
 // Function discretizes workspace based on provided workspace bounds and
 std::vector<WaveFrontCell> DiscretizeWorkspace(double MAX_X, double MIN_X, double MAX_Y, double MIN_Y, double grid_spacing);
-
+//double DiscretizeWorkspace(double MAX_X, double MIN_X, double MAX_Y, double MIN_Y, double grid_spacing);
 
 
 

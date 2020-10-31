@@ -9,7 +9,36 @@
 #include "DiscretizeWorkspace.hpp"
 
 std::vector<WaveFrontCell> DiscretizeWorkspace(double MAX_X, double MIN_X, double MAX_Y, double MIN_Y, double grid_spacing)
+//double DiscretizeWorkspace(double MAX_X, double MIN_X, double MAX_Y, double MIN_Y, double grid_spacing)
 {
+//	// The vector containing all cells in the space
+//		// NOTE: the index of this vector does not correspond to anything
+//
+//
+//		// Number of X and Y values to be generated
+//		int num_X_vals = (MAX_X - MIN_X)/grid_spacing;
+//		int num_Y_vals = (MAX_Y - MIN_Y)/grid_spacing;
+//
+//		// Arrays to hold all the grid points from discretization
+//		double W_xvals[num_X_vals];
+//		double W_yvals[num_Y_vals];
+//		double grid_cells[num_X_vals][num_Y_vals];
+//
+//		for (int y=0; y<num_Y_vals; y++)
+//		{
+//			for (int x=0; x<num_X_vals; x++)
+//			{
+//				grid_cells[x][y] = 0;
+//			}
+//		}
+//
+//		return grid_cells;
+
+
+
+
+
+
 	// The vector containing all cells in the space
 	// NOTE: the index of this vector does not correspond to anything
 	std::vector<WaveFrontCell> grid_cells;

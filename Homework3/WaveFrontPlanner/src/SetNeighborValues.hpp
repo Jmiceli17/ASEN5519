@@ -17,7 +17,7 @@
 
 
 
-void SetNeighborValues(WaveFrontCell &cell);
+//void SetNeighborValues(WaveFrontCell *cell);
 
 
 
