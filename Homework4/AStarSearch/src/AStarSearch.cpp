@@ -94,7 +94,7 @@ int main() {
 
 				// set the back pointer of this node's child to be this node
 				// else if g(nbest) + c(nbest, x) < g(x)
-				//n->p_children[i]->p_parent = n;
+				n->p_children[i]->p_parent = n;
 
 				p_openList.push_back(n->p_children[i]);
 			}
