@@ -112,6 +112,23 @@ double node::distance(node *dest_node)
 	return GetDistance(p1, p2);
 }
 
+edge* node::getEdge(node* n)
+{
+	// Check all the edges of this node to see if it's connected to n
+	for (int i=0; i<int(mp_localNeighbors.size()); i++)
+	{
+		if ((mp_localNeighbors[i]->m_node2 == n) | (mp_localNeighbors[i]->m_node1 == n))
+		{
+			// n is a neighbor, return the edge to this neighbor
+			return mp_localNeighbors[i];
+		}
+//		else
+//		{
+//			std::cout<<"NO VALID EDGE TO NODE FROM: " << this->m_Id << " TO "<< n->m_Id << std::endl;
+//		}
+	}
+}
+
 // Define this such that calling std::sort will put the node with the lowest priority at the front
 bool node::operator < (const node& n)const
 {

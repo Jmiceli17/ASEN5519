@@ -10,10 +10,14 @@
 
 graph* GenerateGraph(int num_nodes, double r_neighborhood, std::vector<RectangleObs> obs_vec, double X_MIN, double X_MAX, double Y_MIN, double Y_MAX)
 {
+	// For random number generator
+	std::random_device rand_dev;
+	std::mt19937 generator(rand_dev());
+
 	graph *p_Graph = new graph();
 	int num_generated_nodes = 0;
 
-	std::cout<< "GENERATING NODES" << std::endl;
+	std::cout<< "[GENERATING NODES...]" << std::endl;
 
  	// ==== Generate the set of nodes ====
 	while (num_generated_nodes < num_nodes)
@@ -26,19 +30,40 @@ graph* GenerateGraph(int num_nodes, double r_neighborhood, std::vector<Rectangle
 		//n->position[0] = (X_MAX - X_MIN) * ( (double)rand() / (double)RAND_MAX ) + X_MIN;
 		//n->position[1] = (Y_MAX - Y_MIN) * ( (double)rand() / (double)RAND_MAX ) + Y_MIN;
 
-		n->mp_position->m_Xpos = (X_MAX - X_MIN) * ( (double)rand() / (double)RAND_MAX ) + X_MIN;
-		n->mp_position->m_Ypos = (Y_MAX - Y_MIN) * ( (double)rand() / (double)RAND_MAX ) + Y_MIN;
+		//double randX = (X_MAX - X_MIN) * ( (double)rand() / RAND_MAX ) + X_MIN;
+		//double randY = (Y_MAX - Y_MIN) * ( (double)rand() / RAND_MAX ) + Y_MIN;
+
+		//n->setX( ((X_MAX - X_MIN) * ( (double)rand() / (double)RAND_MAX )) + X_MIN );
+		//n->setY( ((Y_MAX - Y_MIN) * ( (double)rand() / (double)RAND_MAX )) + Y_MIN );
+
+//	   std::uniform_real_distribution<double> xunif(X_MIN, X_MAX);
+//	   std::uniform_real_distribution<double> yunif(Y_MIN, Y_MAX);
+//
+//	   std::default_random_engine re;
+//
+//	   double randX = xunif(re);
+//	   double randY = yunif(re);
+
+
+		std::uniform_real_distribution<double>  xunif(X_MIN, X_MAX);
+		std::uniform_real_distribution<double>  yunif(Y_MIN, Y_MAX);
+
+		double randX = xunif(generator);
+	    double randY = yunif(generator);
+
+		n->setX( randX );
+		n->setY( randY );
 
 		//std::cout<< "TOTAL # OBSTACLES TO CHECK: " << obs_vec.size() << std::endl;
 
-		//std::cout<< "CHECKING X VAL: " << n->mp_position->m_Xpos << std::endl;
+		//std::cout<< "GENERATED POS: " << n->getX() << "," << n->getY() << std::endl;
 
 		// Check if the new point is in collision
 		for (int o = 0; o < int(obs_vec.size()); o++)
 		{
 			// If the new point is in collision with any obstacle,
 			// we can't add it to the set of nodes on the graph
-			if(obs_vec[o].InCollision( {n->mp_position->m_Xpos, n->mp_position->m_Ypos} ))
+			if(obs_vec[o].InCollision( {n->getX(), n->getY()} ))
 			{
 				point_is_valid = false;
 			}
@@ -49,9 +74,11 @@ graph* GenerateGraph(int num_nodes, double r_neighborhood, std::vector<Rectangle
 		if (point_is_valid)
 		{
 			p_Graph->SetOfNodes.push_back(n);
+
 		}
 
-		// Increment the number of generated nodes
+		// Increment the number of generated nodes (we are only sampling num_nodes times, they don't have to
+		// produce successful additions to the graph
 		num_generated_nodes++;
 
 	} // End while
@@ -59,51 +86,60 @@ graph* GenerateGraph(int num_nodes, double r_neighborhood, std::vector<Rectangle
 
 
 
-	std::cout<< "GENERATING EDGES IN LOCAL NEIGHBORHOODS" << std::endl;
+	std::cout<< "[GENERATING EDGES IN LOCAL NEIGHBORHOODS...]" << std::endl;
 
 	// ==== Generate the set of edges ====
 	// Generate neighbors for each node
 	for (int n = 0; n < int(p_Graph->SetOfNodes.size()); n++)
 	{
-		// initialize the list of neighbors
-//		node *new_node = new node();
-//		std::vector<node*> neighbors = {new_node};
-
-		//std::vector<node*> neighbors = {p_Graph->SetOfNodes.at(n)};	// made this a member variable
-
-
 		for (int m = 0; m < int(p_Graph->SetOfNodes.size()); m++)
 		{
-
+			// std::cout<<"DIST TO NODE M: " << (p_Graph->SetOfNodes[n]->distance(p_Graph->SetOfNodes[m])) <<std::endl;
 
 			// If the distance to node m is greater than 0 (i.e. m != n) AND distance is within the neighborhood radius
 			if (p_Graph->SetOfNodes[n]->distance(p_Graph->SetOfNodes[m]) > 0 && p_Graph->SetOfNodes[n]->distance(p_Graph->SetOfNodes[m]) < r_neighborhood)
 			{
-				//std::cout<<"Distance to neighbor m: " << p_Graph->SetOfNodes[n]->distance(p_Graph->SetOfNodes[m])<<std::endl;
+				//std::cout<<"RANGE TO NODE M: " << (p_Graph->SetOfNodes[n]->distance(p_Graph->SetOfNodes[m])) <<std::endl;
 
-				// Add this node to the neighbors of node n
-				p_Graph->SetOfNodes[n]->mp_localNeighbors.push_back(p_Graph->SetOfNodes[m]);
-			}
-		}
+				// If the path between node n and node m is collision free, connect them with an edge and add it to the set of edges
+				if (PathCollisionFree(p_Graph->SetOfNodes[n], p_Graph->SetOfNodes[m], obs_vec))
+				{
+					// std:: cout<<"EDGE IS COLLISION FREE"<< std::endl;
 
-		//std::cout<<"Number neighbors to check: "<< p_Graph->SetOfNodes[n]->mp_localNeighbors.size() <<std::endl;
+					// If this pair of nodes does not already have an edge connecting them
+					if ( !(p_Graph->edgeExists(p_Graph->SetOfNodes[n], p_Graph->SetOfNodes[m])) )
+					{
+						// std::cout<<"ADDING EDGE" <<std::endl;
 
-		// Attempt to connect edges between node n and all its neighbors
-		//for (int m = 0; m < neighbors.size(); m++)
-		for (int m = 0; m < int(p_Graph->SetOfNodes[n]->mp_localNeighbors.size()); m++)
+						// Add this node to the neighbors of node n
+						// p_Graph->SetOfNodes[n]->mp_localNeighbors.push_back(p_Graph->SetOfNodes[m]);
 
-		{
-			// If the edge between node n and node m is collision free, add it to the set of edges
-			if (PathCollisionFree(p_Graph->SetOfNodes[n], p_Graph->SetOfNodes[n]->mp_localNeighbors[m], obs_vec))
-			{
-				// Edge connecting node n to neighbor m
-				edge *e = new edge(p_Graph->SetOfNodes[n], p_Graph->SetOfNodes[n]->mp_localNeighbors[m]);
+						// Edge connecting node n to neighbor m
+						edge *e = new edge(p_Graph->SetOfNodes[n], p_Graph->SetOfNodes[m]);
 
-				p_Graph->SetOfEdges.push_back(e);
-			}
-		}
+						p_Graph->SetOfEdges.push_back(e);
 
-	}	// end for
+						// Add this node to the neighbors of node n
+						p_Graph->SetOfNodes[n]->mp_localNeighbors.push_back(e);
+
+						// Add node n to the neighbors of node m
+						// p_Graph->SetOfNodes[m]->mp_localNeighbors.push_back(p_Graph->SetOfNodes[n]);
+						// p_Graph->SetOfNodes[m]->mp_localNeighbors.push_back(e);
+
+						// Edge connecting node m to neighbor n
+						edge *e2 = new edge(p_Graph->SetOfNodes[m], p_Graph->SetOfNodes[n]);
+						p_Graph->SetOfNodes[m]->mp_localNeighbors.push_back(e2);
+
+
+					} //end if
+
+				} // end if
+
+			} // end if
+
+		} // end for
+
+	} // end for
 
 
 	return p_Graph;

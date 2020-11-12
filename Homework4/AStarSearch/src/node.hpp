@@ -58,6 +58,9 @@ public:
 	// Function for returning distance to another node
 	double distance(node *dest_node);
 
+	// Function for returning the edge connecting this node to another node
+	edge* getEdge(node* n);
+
 	// overload < operator to use "sort" method on nodes
 	bool operator < (const node& n)const;
 

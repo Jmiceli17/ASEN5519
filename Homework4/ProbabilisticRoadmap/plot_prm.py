@@ -26,10 +26,17 @@ if __name__ == "__main__":
 
 		plt.plot(data['X'], data['Y'], 'o')
 
+		# Get the number of nodes in the log file
+		num_nodes = len(data['X'])	
+
 		# Labels
 		#axes1.set_title('Path Taken by Robot in 2 Dimensional Space \n(Workspace 1 from Exercise 7 of Homework 1)')
 		axes1.set_xlabel('X position (m)')
 		axes1.set_ylabel('Y position (m)')
+
+		textstr = "Number of Nodes: " + str(num_nodes)
+		axes1.text(0.9, -0.05, textstr, transform=axes1.transAxes, fontsize=11,
+        verticalalignment='top')
 
 		# Range for w-space
 		#axes1.set_xlim([0,11])

@@ -64,6 +64,7 @@ int main() {
 
 
 	// Add neighbors to each cell
+	// Note: Commented out edges would make the graph bi-directional
 	edge *e1 = new edge(n_start,n_A,1);
 	edge *e2 = new edge(n_start,n_B,1);
 	edge *e3 = new edge(n_start,n_C,1);
@@ -92,36 +93,36 @@ int main() {
 	n_C->mp_localNeighbors.push_back(e11);
 	n_C->mp_localNeighbors.push_back(e12);
 
-	edge *e13 = new edge(n_D,n_A,1);
-	n_D->mp_localNeighbors.push_back(e13);
+	//edge *e13 = new edge(n_D,n_A,1);
+	//n_D->mp_localNeighbors.push_back(e13);
 
-	edge *e14 = new edge(n_E,n_A,1);
+	//edge *e14 = new edge(n_E,n_A,1);
 	edge *e15 = new edge(n_E,n_goal,3);
-	n_E->mp_localNeighbors.push_back(e14);
+	//n_E->mp_localNeighbors.push_back(e14);
 	n_E->mp_localNeighbors.push_back(e15);
 
-	edge *e16 = new edge(n_F,n_A,3);
-	n_F->mp_localNeighbors.push_back(e16);
+	//edge *e16 = new edge(n_F,n_A,3);
+	//n_F->mp_localNeighbors.push_back(e16);
 
-	edge *e17 = new edge(n_G,n_B,4);
+	//edge *e17 = new edge(n_G,n_B,4);
 	edge *e18 = new edge(n_G,n_goal,3);
-	n_G->mp_localNeighbors.push_back(e17);
+	//n_G->mp_localNeighbors.push_back(e17);
 	n_G->mp_localNeighbors.push_back(e18);
 
-	edge *e19 = new edge(n_H,n_B,1);
-	n_H->mp_localNeighbors.push_back(e19);
+	//edge *e19 = new edge(n_H,n_B,1);
+	//n_H->mp_localNeighbors.push_back(e19);
 
-	edge *e20 = new edge(n_I,n_B,2);
+	//edge *e20 = new edge(n_I,n_B,2);
 	edge *e21 = new edge(n_I,n_goal,3);
-	n_I->mp_localNeighbors.push_back(e20);
+	//n_I->mp_localNeighbors.push_back(e20);
 	n_I->mp_localNeighbors.push_back(e21);
 
-	edge *e22 = new edge(n_J,n_C,1);
-	n_J->mp_localNeighbors.push_back(e22);
+	//edge *e22 = new edge(n_J,n_C,1);
+	//n_J->mp_localNeighbors.push_back(e22);
 
-	edge *e23 = new edge(n_K,n_C,1);
+	//edge *e23 = new edge(n_K,n_C,1);
 	edge *e24 = new edge(n_K,n_goal,2);
-	n_K->mp_localNeighbors.push_back(e23);
+	//n_K->mp_localNeighbors.push_back(e23);
 	n_K->mp_localNeighbors.push_back(e24);
 
 	edge *e25 = new edge(n_L,n_C,1);
@@ -140,7 +141,8 @@ int main() {
 	// ======== CONDUCT THE SEARCH ========
 
 	int LOOP_ITERATIONS = 0;
-	bool USE_DIJKSTRA = false;
+	//bool USE_DIJKSTRA = false;
+	bool USE_DIJKSTRA = true;
 	// initialize the open list
 	std::vector<node*> p_openList;
 	std::vector<node *> p_processedNodes;
@@ -207,11 +209,23 @@ int main() {
 				// Update parent
 				current_node->mp_localNeighbors[ni]->m_node2->mp_parent = current_node;
 
+				// Create edge between neighbor and its parent
+				edge *e = new edge(current_node->mp_localNeighbors[ni]->m_node2, current_node->mp_localNeighbors[ni]->m_node2->mp_parent, current_node->mp_localNeighbors[ni]->m_edgeLength);
+				current_node->mp_localNeighbors[ni]->m_node2->mp_localNeighbors.push_back(e);
+
 				// Update distance from start
 				current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart = potential_g;
 
 				// Update priority
-				current_node->mp_localNeighbors[ni]->m_node2->m_priority = current_node->mp_localNeighbors[ni]->m_node2->m_heuristic + current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart;
+				if (USE_DIJKSTRA)
+				{
+					// Only consider path length
+					current_node->mp_localNeighbors[ni]->m_node2->m_priority = current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart;
+				}
+				else
+				{
+					current_node->mp_localNeighbors[ni]->m_node2->m_priority = current_node->mp_localNeighbors[ni]->m_node2->m_heuristic + current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart;
+				}
 
 				// Add it to the queue
 				p_openList.push_back(current_node->mp_localNeighbors[ni]->m_node2);
@@ -229,7 +243,15 @@ int main() {
 				current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart = potential_g;
 
 				// Update priority
-				current_node->mp_localNeighbors[ni]->m_node2->m_priority = current_node->mp_localNeighbors[ni]->m_node2->m_heuristic + current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart;
+				if (USE_DIJKSTRA)
+				{
+					// Only consider path length
+					current_node->mp_localNeighbors[ni]->m_node2->m_priority = current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart;
+				}
+				else
+				{
+					current_node->mp_localNeighbors[ni]->m_node2->m_priority = current_node->mp_localNeighbors[ni]->m_node2->m_heuristic + current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart;
+				}
 			}
 
 		} // end for
@@ -243,25 +265,33 @@ int main() {
 	// While a parent exists...
 	std::vector<edge*> path;
 	node* current_node = n_goal;
-	double total_path_length = 0; 	// TODO how to compute this?
+	double TOTAL_PATH_LENGTH = 0; 	// TODO how to compute this?
 	while (current_node->mp_parent != NULL)
 	{
-		std::cout << "Generating path from back pointers" << std::endl;
+		//std::cout << "Generating path from back pointers" << std::endl;
+
 		// Add the edge between the current node and its parent
-		path.push_back(new edge(current_node->mp_parent, current_node));
+		//path.push_back(new edge(current_node->mp_parent, current_node));
+		path.push_back(current_node->getEdge(current_node->mp_parent));
+
+		TOTAL_PATH_LENGTH += current_node->getEdge(current_node->mp_parent)->m_edgeLength;
 
 		// Update the current node to its parent
 		current_node = current_node->mp_parent;
 	}
 
 	// Print the path:
-	std::cout<<"PATH TO GOAL FOUND"<<std::endl;
+	std::cout<<"======= PATH TO GOAL FOUND ======="<<std::endl;
+	std::cout<<"=================================="<<std::endl;
+	std::cout<<"USING DIJKSTRA?: "<< USE_DIJKSTRA << std::endl;
 	std::cout<<"TOTAL LOOP ITERATIONS: "<< LOOP_ITERATIONS << std::endl;
+	std::cout<<"TOTAL PATH LENGTH: " << TOTAL_PATH_LENGTH <<std::endl;
 	std::cout<<"THE PATH (FROM GOAL TO START) IS:"<< std::endl;
 	for (int e=0; e<int(path.size()); e++)
 	{
 		std::cout<<"NODE ID: " << path[e]->m_node1->m_Id << std::endl;
 	}
+
 
 
 

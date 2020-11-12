@@ -31,6 +31,8 @@ class graph
 	std::vector<node*> SetOfNodes;	// Set of nodes that define the graph
 	std::vector<edge*> SetOfEdges;	// Set of edges that define the graph
 
+	bool edgeExists(node* n1, node* n2);
+
 };
 
 

@@ -8,89 +8,227 @@
 
 #include "PRMQuery.hpp"
 
-std::vector<edge*> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, node* n_init, node* n_goal, double r_neighborhood)
+// std::vector<edge*> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, node* n_init, node* n_goal, double r_neighborhood)
+std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, node* n_init, node* n_goal, double r_neighborhood)
 {
 	std::vector<edge*> PRMPath;
 	// Add initial and goal nodes to the graph
 	p_graph->SetOfNodes.push_back(n_init);
 	p_graph->SetOfNodes.push_back(n_goal);
 
-
+//////////////////////////////////////////
 	// ==== CONNECT Q_INIT TO GRAPH ====
-	// Generate neighbors of Q_init
+//	// Generate neighbors of Q_init
+//	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
+//	{
+//		// If the distance to node n is greater than 0 (i.e. n != n_init) AND distance is within the neighborhood radius
+//		if ((n_init->distance(p_graph->SetOfNodes[n])) > 0 && (n_init->distance(p_graph->SetOfNodes[n]) < r_neighborhood))
+//		{
+//			// If the path to the neighbor is collision free
+//			if (PathCollisionFree(n_init, p_graph->SetOfNodes[n], obs_vec))
+//			{
+//
+//
+//				// Add this node to the neighbors of node n_init
+//				n_init->mp_localNeighbors.push_back(p_graph->SetOfNodes[n]);
+//
+//				// Edge connecting node n_init to neighbor n
+//				edge *e = new edge(n_init, p_graph->SetOfNodes[n]);
+//
+//				p_graph->SetOfEdges.push_back(e);
+//
+//
+//				//////// Add n_init to the neighbors of its neighbor
+//				p_graph->SetOfNodes[n]->mp_localNeighbors.push_back(n_init);
+//				////////
+//
+//
+//			//	std::cout<<"CONNECTED Q_INIT TO GRAPH" << std::endl;
+//
+//			}
+//		}
+//	}
+//////////////////////////////////////////
+
+
+	std::vector<node*> n_init_potl_neighbors;
 	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
 	{
+
 		// If the distance to node n is greater than 0 (i.e. n != n_init) AND distance is within the neighborhood radius
-		if (n_init->distance(p_graph->SetOfNodes[n]) > 0 && n_init->distance(p_graph->SetOfNodes[n]) < r_neighborhood)
+		if ( (n_init->distance(p_graph->SetOfNodes[n])) > 0 && (n_init->distance(p_graph->SetOfNodes[n]) < r_neighborhood) )
 		{
-			//std::cout<<"Distance to neighbor m: " << p_Graph->SetOfNodes[n]->distance(p_Graph->SetOfNodes[m])<<std::endl;
+			//std::cout<<"NODE IN NEIGHBORHOOD OF Q_GOAL" <<std::endl;
+			// If the path to the neighbor is collision free
+			if (PathCollisionFree(n_init, p_graph->SetOfNodes[n], obs_vec))
+			{
+				n_init_potl_neighbors.push_back(p_graph->SetOfNodes[n]);
+			}
 
-			// Add this node to the neighbors of node n_init
-			n_init->mp_localNeighbors.push_back(p_graph->SetOfNodes[n]);
 		}
 	}
-	// Generate closest valid edge for q_init
-	std::sort(n_init->mp_localNeighbors.begin(), n_init->mp_localNeighbors.end());
-
-	// Now that the neighbors have been sorted, iterating over them will start with
-	// the nearest neighbor
-	for (int ni = 0; ni < int(n_init->mp_localNeighbors.size()); ni++)
+	// Find the closest neighbor
+	node *nearest_init = n_init_potl_neighbors[0];
+	double dist_of_nearest_n_init = n_init->distance(n_init_potl_neighbors[0]);
+	for (int pn = 0; pn<int(n_init_potl_neighbors.size()); pn++)
 	{
-		if (PathCollisionFree(n_init, n_init->mp_localNeighbors[ni], obs_vec))
+		double dist_to_current_n = n_init->distance(n_init_potl_neighbors[pn]);
+			if (dist_to_current_n < dist_of_nearest_n_init)
 			{
-				// Edge connecting node n_init to neighbor ni
-				edge *e = new edge(n_init, n_init->mp_localNeighbors[ni]);
-
-				p_graph->SetOfEdges.push_back(e);
-
-				break;	// We only want to connect q_init with the closest node
+				nearest_init = n_init_potl_neighbors[pn];
+				dist_of_nearest_n_init = dist_to_current_n;
 			}
+
 	}
+	// Edge connecting node n_goal to neighbor n
+	edge *e_init = new edge(n_init, nearest_init);
+
+
+	// Add this node to the neighbors of node n_init
+	n_init->mp_localNeighbors.push_back(e_init);
+
+	p_graph->SetOfEdges.push_back(e_init);
+
+	// Add n_goal to the neighbors of its neighbor
+	nearest_init->mp_localNeighbors.push_back(e_init);
+
+	// DEBUG:
+	std::cout<<"[LENGTH OF EDGE CONENCTING INIT TO GRAPH] " << e_init->getEdgeLength() <<std::endl;
 	// =================================
 
 
-	// ==== CONNECT Q_GOAL TO GRAPH ====
-	// Generate neighbors of Q_goal
+	//std::cout<<"n_goal POS: " << n_goal->getX() << "," << n_goal->getY() <<std::endl;
+
+
+////////////////////////////////////////
+//	// ==== CONNECT Q_GOAL TO GRAPH ====
+//	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
+//	{
+//
+//		// If the distance to node n is greater than 0 (i.e. n != n_init) AND distance is within the neighborhood radius
+//		if ( (n_goal->distance(p_graph->SetOfNodes[n])) > 0 && (n_goal->distance(p_graph->SetOfNodes[n]) < r_neighborhood) )
+//		{
+//			//std::cout<<"NODE IN NEIGHBORHOOD OF Q_GOAL" <<std::endl;
+//			// If the path to the neighbor is collision free
+//			if (PathCollisionFree(n_goal, p_graph->SetOfNodes[n], obs_vec))
+//			{
+//
+//
+//				// Add this node to the neighbors of node n_init
+//				n_goal->mp_localNeighbors.push_back(p_graph->SetOfNodes[n]);
+//
+//				// Edge connecting node n_goal to neighbor n
+//				edge *e = new edge(n_goal, p_graph->SetOfNodes[n]);
+//
+//				p_graph->SetOfEdges.push_back(e);
+//
+//
+//				//////// Add n_goal to the neighbors of its neighbor
+//				p_graph->SetOfNodes[n]->mp_localNeighbors.push_back(n_goal);
+//				////////
+//
+//				//std::cout<<"CONNECTED Q_GOAL TO GRAPH" << std::endl;
+//
+//			}
+//		}
+//
+//	}
+////////////////////////////////////////
+
+	std::vector<node*> n_goal_potl_neighbors;
 	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
 	{
-		// If the distance to node n is greater than 0 (i.e. n != n_goal) AND distance is within the neighborhood radius
-		if (n_goal->distance(p_graph->SetOfNodes[n]) > 0 && n_goal->distance(p_graph->SetOfNodes[n]) < r_neighborhood)
-		{
-			//std::cout<<"Distance to neighbor m: " << p_Graph->SetOfNodes[n]->distance(p_Graph->SetOfNodes[m])<<std::endl;
 
-			// Add this node to the neighbors of node n_goal
-			n_goal->mp_localNeighbors.push_back(p_graph->SetOfNodes[n]);
+		// If the distance to node n is greater than 0 (i.e. n != n_init) AND distance is within the neighborhood radius
+		if ( (n_goal->distance(p_graph->SetOfNodes[n])) > 0 && (n_goal->distance(p_graph->SetOfNodes[n]) < r_neighborhood) )
+		{
+			//std::cout<<"NODE IN NEIGHBORHOOD OF Q_GOAL" <<std::endl;
+			// If the path to the neighbor is collision free
+			if (PathCollisionFree(n_goal, p_graph->SetOfNodes[n], obs_vec))
+			{
+				n_goal_potl_neighbors.push_back(p_graph->SetOfNodes[n]);
+			}
+
 		}
 	}
-	// Generate closest valid edge for n_goal
-	std::sort(n_goal->mp_localNeighbors.begin(), n_goal->mp_localNeighbors.end());
-
-	// Now that the neighbors have been sorted, iterating over them will start with
-	// the nearest neighbor
-	for (int ni = 0; ni < int(n_goal->mp_localNeighbors.size()); ni++)
+	// Find the closest neighbor
+	node *nearest_goal = n_goal_potl_neighbors[0];
+	double dist_of_nearest_n_goal = n_goal->distance(n_goal_potl_neighbors[0]);
+	for (int pn = 0; pn<int(n_goal_potl_neighbors.size()); pn++)
 	{
-		if (PathCollisionFree(n_goal, n_goal->mp_localNeighbors[ni], obs_vec))
+		double dist_to_current_n = n_goal->distance(n_goal_potl_neighbors[pn]);
+			if (dist_to_current_n < dist_of_nearest_n_goal)
 			{
-				// Edge connecting n_goal to neighbor ni
-				edge *e = new edge(n_goal, n_goal->mp_localNeighbors[ni]);
-
-				p_graph->SetOfEdges.push_back(e);
-
-				break;	// We only want to connect q_init with the closest node
+				nearest_goal = n_goal_potl_neighbors[pn];
+				dist_of_nearest_n_goal = dist_to_current_n;
 			}
+
 	}
+
+
+	// Edge connecting node n_goal to neighbor n
+	edge *e_goal = new edge(n_goal, nearest_goal);
+	p_graph->SetOfEdges.push_back(e_goal);
+
+	// Add this node to the neighbors of node n_init
+	n_goal->mp_localNeighbors.push_back(e_goal);
+
+
+	// Add n_goal to the neighbors of its neighbor
+	nearest_goal->mp_localNeighbors.push_back(e_goal);
+
+	// DEBUG:
+//	std::cout<<"num neighbors n_goal: " << n_goal->mp_localNeighbors.size() << std::endl;
+//	std::cout<<"num neighbors of n_goal's neighbor: " << nearest_goal->mp_localNeighbors.size() << std::endl;
+
+	// DEBUG:
+	std::cout<<"[LENGTH OF EDGE CONENCTING GOAL TO GRAPH] " << e_goal->getEdgeLength() <<std::endl;
+
 	// =================================
 
-	std::cout<<"CONNECTED Q_INIT AND Q_GOAL TO GRAPH"<<std::endl;
 
-	std::cout<<"CONDUCTING A* SEARCH"<<std::endl;
+	std::cout<<"[CONDUCTING A* SEARCH...]"<<std::endl;
+
+//	// DEBUG:
+//	for (int i = 0; i<int(p_graph->SetOfNodes.size()); i++)
+//	{
+//		if (p_graph->SetOfNodes[i]==n_init)
+//		{
+//			std::cout<<"====N_INIT IS IN GRAPH====" <<std::endl;
+//		}
+//		else if (p_graph->SetOfNodes[i]==n_goal)
+//		{
+//			std::cout<<"====N_GOAL IS IN GRAPH====" <<std::endl;
+//		}
+//
+//	}
+
+	// DEBUG:
+//	// IDENTIFY IF THERE ARE ANY NODES WITH THE GOAL AS A NEIGHBOR
+//	for (int i = 0; i<int(p_graph->SetOfNodes.size()); i++)
+//	{
+//		node *curr = p_graph->SetOfNodes[i];
+//		for (int j = 0; j < int(curr->mp_localNeighbors.size()); j++)
+//		{
+//			if (curr->mp_localNeighbors[j]->m_node1 == n_goal | curr->mp_localNeighbors[j]->m_node2 == n_goal)
+//			{
+//				std::cout<< "GOAL IS A NEIGHBOR OF SOME CELL" << std::endl;
+//			}
+//			if (curr->mp_localNeighbors[j]->m_node1 == n_init | curr->mp_localNeighbors[j]->m_node2 == n_init)
+//			{
+//				std::cout<< "INIT IS A NEIGHBOR OF SOME CELL" << std::endl;
+//			}
+//		}
+//	}
 
 
-	PRMPath = AStarSearch(n_init, n_goal);
+
+	//PRMPath = AStarSearch(n_init, n_goal);
+	//return PRMPath;
 
 
+	std::vector<node*> processed_nodes = AStarSearch(n_init, n_goal);
 
+	return processed_nodes;
 
-
-	return PRMPath;
 }

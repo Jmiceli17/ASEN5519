@@ -21,8 +21,11 @@ bool PathCollisionFree(node *n1, node *n2,  std::vector<RectangleObs> obs_vec)
 //		dir_vec[i] = n2->position[i] - n1->position[i];
 //	}
 
-	dir_vec[0] = n2->mp_position->m_Xpos - n1->mp_position->m_Xpos;
-	dir_vec[1] = n2->mp_position->m_Ypos - n1->mp_position->m_Ypos;
+//	dir_vec[0] = n2->mp_position->m_Xpos - n1->mp_position->m_Xpos;
+//	dir_vec[1] = n2->mp_position->m_Ypos - n1->mp_position->m_Ypos;
+
+	dir_vec[0] = n2->getX() - n1->getX();
+	dir_vec[1] = n2->getY() - n1->getY();
 
 
 	double dir_vec_mag = VectorNorm(dir_vec);		// Distance between end points of edge
@@ -34,8 +37,8 @@ bool PathCollisionFree(node *n1, node *n2,  std::vector<RectangleObs> obs_vec)
 	// Discretize the path
 	int i = 1;
 	double mag = 0;
-	double x_start = n1->mp_position->m_Xpos;
-	double y_start = n2->mp_position->m_Ypos;
+	double x_start = n1->getX();
+	double y_start = n1->getY();
 
 	//std::cout<<"x_start: " <<x_start<<std::endl;
 	//std::cout<<"y_start: " <<y_start<<std::endl;
