@@ -5,11 +5,11 @@
  *      Author: Joe
  */
 
-#include "node.hpp"
+#include "simpleNode.hpp"
 
 
 // Constructor
-node::node(double heuristic, double length_from_start)
+simpleNode::simpleNode(double heuristic, double length_from_start)
 {
 	h = heuristic;
 	g = length_from_start;
@@ -21,7 +21,7 @@ node::node(double heuristic, double length_from_start)
 }
 
 // Constructor
-node::node(double heuristic, double length_from_start, node parent)
+simpleNode::simpleNode(double heuristic, double length_from_start, simpleNode parent)
 {
 	h = heuristic;
 	g = length_from_start;
@@ -37,18 +37,18 @@ node::node(double heuristic, double length_from_start, node parent)
 }
 
 // Destructor
-node::~node()
+simpleNode::~simpleNode()
 {
 
 }
 
-void node::AddChild(node *child)
+void simpleNode::AddChild(simpleNode *child)
 {
 	//node p_child = child;
 	p_children.push_back(child);
 }
 
-bool node::operator < (const node& n)const
+bool simpleNode::operator < (const simpleNode& n)const
 {
 	return (this->f < n.f);
 }

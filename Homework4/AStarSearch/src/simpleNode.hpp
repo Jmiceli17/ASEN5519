@@ -5,15 +5,15 @@
  *      Author: Joe
  */
 
-#ifndef NODE_HPP_
-#define NODE_HPP_
+#ifndef SIMPLENODE_HPP_
+#define SIMPLENODE_HPP_
 
 #include <vector>
 
 using namespace std;
 
 
-class node
+class simpleNode
 {
 public:
 	double h;							// heuristic value of this node
@@ -21,21 +21,21 @@ public:
 	double f;							// f(n) = g(n) + h(n), the priority
 	bool node_explored;					// bool indicating if this node has already been visited
 
-	node *p_parent; 					// Pointer to the parent node of this node
-	std::vector<node*> p_children; 	// Vector of pointers to children of this node
+	simpleNode *p_parent; 					// Pointer to the parent node of this node
+	std::vector<simpleNode*> p_children; 		// Vector of pointers to children of this node
 
 	// Constructors
-	node(double heuristic, double length_from_start);					// Constructor for start node (i.e. no parent)
-	node(double heuristic, double length_from_start, node p_parent);
+	simpleNode(double heuristic, double length_from_start);					// Constructor for start node (i.e. no parent)
+	simpleNode(double heuristic, double length_from_start, simpleNode p_parent);
 
 	// Destructor
-	~node();
+	~simpleNode();
 
 	// Function for adding children to p_children
-	void AddChild(node *child);
+	void AddChild(simpleNode *child);
 
 	// overload < operator to use "sort" method on nodes
-	bool operator < (const node& n)const;
+	bool operator < (const simpleNode& n)const;
 
 
 
@@ -46,4 +46,4 @@ public:
 };
 
 
-#endif /* NODE_HPP_ */
+#endif /* SIMPLENODE_HPP_ */
