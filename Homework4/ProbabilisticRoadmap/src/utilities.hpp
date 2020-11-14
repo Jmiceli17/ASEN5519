@@ -3,6 +3,10 @@
  *
  *  Created on: Oct 19, 2020
  *      Author: Joe
+ *
+ *  Description: Helpful functions for motion planning algorithms
+ *
+ *
  */
 
 #ifndef UTILITIES_HPP_

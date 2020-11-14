@@ -16,35 +16,18 @@ bool PathCollisionFree(node *n1, node *n2,  std::vector<RectangleObs> obs_vec)
 	double step = 0.01; 				// Step size used to discretize the path
 
 	std::vector<double> dir_vec(2);		// Direction vector from n1 to n2
-//	for (int i=0; i< n1->position.size(); i++)
-//	{
-//		dir_vec[i] = n2->position[i] - n1->position[i];
-//	}
-
-//	dir_vec[0] = n2->mp_position->m_Xpos - n1->mp_position->m_Xpos;
-//	dir_vec[1] = n2->mp_position->m_Ypos - n1->mp_position->m_Ypos;
-
 	dir_vec[0] = n2->getX() - n1->getX();
 	dir_vec[1] = n2->getY() - n1->getY();
 
-
 	double dir_vec_mag = VectorNorm(dir_vec);		// Distance between end points of edge
 
-	//std::cout<<"DIR VEC MAG "<< dir_vec_mag << std::endl;
-
-	double theta = acos(dir_vec[0]/dir_vec_mag);	// Angle of direction vector
+	double theta = acos(dir_vec[0]/dir_vec_mag);	// Angle of direction vector (wrt. horizontal)
 
 	// Discretize the path
 	int i = 1;
 	double mag = 0;
 	double x_start = n1->getX();
 	double y_start = n1->getY();
-
-	//std::cout<<"x_start: " <<x_start<<std::endl;
-	//std::cout<<"y_start: " <<y_start<<std::endl;
-
-	//int num_points = (n2->mp_position->m_Xpos - x_start)/step;
-	//std::vector<std::vector<double>> path_points(num_points);	// vector of discretized points on path
 
 	std::vector<std::vector<double>> path_points;	// vector of discretized points on path
 
@@ -56,18 +39,13 @@ bool PathCollisionFree(node *n1, node *n2,  std::vector<RectangleObs> obs_vec)
 		double pt_x = x_start + i*step*cos(theta);
 		double pt_y = y_start + i*step*sin(theta);
 
-		//std::cout<<"x_pt: " <<pt_x<<std::endl;
-		//std::cout<<"y_pt: " <<pt_y<<std::endl;
-
 		std::vector<double> point = {pt_x,pt_y};
-
 
 		// add the point to the vector of points
 		path_points.push_back(point);
 
 		mag = sqrt((pt_x-x_start)*(pt_x-x_start) + (pt_y-y_start)*(pt_y-y_start));
 		//std::cout<<"DISCRETIZED MAG "<< mag << std::endl;
-
 
 		i++;
 	}

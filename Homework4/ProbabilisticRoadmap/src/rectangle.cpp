@@ -39,7 +39,7 @@ RectangleObs::RectangleObs(std::vector<std::vector<double>> vert_vect)
 	min_y_val = *std::min_element(yvals, yvals+4);
 
 	// Generate "vector" of boundary points
-	GenerateBoundaryPoints();
+	//GenerateBoundaryPoints();
 }
 
 RectangleObs::~RectangleObs()
@@ -116,31 +116,31 @@ double RectangleObs::p3(double x)
 
 
 
-void RectangleObs::GenerateBoundaryPoints()
-{
-	// Using each primitive, generate a discrete vector of points on the boundary of the obstacle
-	for(double y = min_y_val; y<max_y_val; y+=0.1)
-	{
-		// Add each point from this primitive to the vector of boundary points
-		boundary_points.push_back({p0(y) , y});
-	}
-	for(double x = min_x_val; x<max_x_val; x+=0.1)
-	{
-		// Add each point from this primitive to the vector of boundary points
-		boundary_points.push_back({x , p1(x)});
-	}
-	for(double y = min_y_val; y<max_y_val; y+=0.1)
-	{
-		// Add each point from this primitive to the vector of boundary points
-		boundary_points.push_back({p2(y) , y});
-	}
-	for(double x = min_x_val; x<max_x_val; x+=0.1)
-	{
-		// Add each point from this primitive to the vector of boundary points
-		boundary_points.push_back({x , p3(x)});
-	}
-
-}
+//void RectangleObs::GenerateBoundaryPoints()
+//{
+//	// Using each primitive, generate a discrete vector of points on the boundary of the obstacle
+//	for(double y = min_y_val; y<max_y_val; y+=0.1)
+//	{
+//		// Add each point from this primitive to the vector of boundary points
+//		boundary_points.push_back({p0(y) , y});
+//	}
+//	for(double x = min_x_val; x<max_x_val; x+=0.1)
+//	{
+//		// Add each point from this primitive to the vector of boundary points
+//		boundary_points.push_back({x , p1(x)});
+//	}
+//	for(double y = min_y_val; y<max_y_val; y+=0.1)
+//	{
+//		// Add each point from this primitive to the vector of boundary points
+//		boundary_points.push_back({p2(y) , y});
+//	}
+//	for(double x = min_x_val; x<max_x_val; x+=0.1)
+//	{
+//		// Add each point from this primitive to the vector of boundary points
+//		boundary_points.push_back({x , p3(x)});
+//	}
+//
+//}
 
 
 

@@ -103,11 +103,11 @@ edge* node::getEdge(node* n)
 }
 
 
-// Define this such that calling std::sort will put the node with the lowest priority at the front
-bool node::operator < (const node& n)const
-{
-	return (this->m_priority < n.m_priority);
-}
+//// Define this such that calling std::sort will put the node with the lowest priority at the front
+//bool node::operator < (const node& n)const
+//{
+//	return (this->m_priority < n.m_priority);
+//}
 
 
 

@@ -11,17 +11,18 @@
 #include "AStarSearch.hpp"
 
 
-//std::vector<edge*> AStarSearch(node* n_init, node* n_goal)
-std::vector<node*> AStarSearch(node* n_init, node* n_goal)
+
+#include <iostream>
+#include <fstream>
+
+std::vector<edge*> AStarSearch(node* n_init, node* n_goal)
+//std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 
 {
-	// DEBUG:
-	//std::cout<< "position of n_goal " << n_goal->getX() << "," << n_goal->getY() << std::endl;
-
-
 	int LOOP_ITERATIONS = 0;
 	bool USE_DIJKSTRA = false;
 	//bool USE_DIJKSTRA = true;
+
 	// initialize the open list
 	std::vector<node*> p_openList;
 	std::vector<node *> p_processedNodes;
@@ -53,23 +54,29 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 		p_processedNodes.push_back(current_node);
 
 		//DEBUG:
-//		if (current_node->mp_parent == NULL)
+//		if (current_node == n_goal)
 //		{
-//			std::cout<<"CURRENT NODE HAS NO PARENT"<< std::endl;
+//			std::cout<<"===GOAL HAS BEEN SELECTED FROM OPEN LIST==="<< std::endl;
 //		}
 
 		// Expand from the current node
 		for (int ni = 0; ni<int(current_node->mp_localNeighbors.size()); ni++)
 		{
 
-			// DEBUG: check if this is the goal
-//			if ( (current_node->mp_localNeighbors[ni]->m_node2 == n_goal) | (current_node->mp_localNeighbors[ni]->m_node1 == n_goal) )
+//			// DEBUG: check if this neighbor is the goal
+//			if(current_node->mp_localNeighbors[ni]->m_node2 == n_goal)
 //			{
-//				std::cout<< "==== THIS IS THE GOAL ====" << std::endl;
+//				std::cout<< "==== NODE2 IS THE GOAL ====" << std::endl;
+//				std::cout<< "GOAL EXPLORED? " << current_node->mp_localNeighbors[ni]->m_node2-> m_nodeExplored << std::endl;
+//
+//			}
+//			else if (current_node->mp_localNeighbors[ni]->m_node1 == n_goal)
+//			{
+//				std::cout<< "==== NODE1 IS THE GOAL ====" << std::endl;
+//				std::cout<< "GOAL EXPLORED? " << current_node->mp_localNeighbors[ni]->m_node1-> m_nodeExplored << std::endl;
 //			}
 
 
-			// double potential_g = current_node->m_distFromStart + current_node->mp_localNeighbors[ni]->m_edgeLength;
 			//std::cout<<"LENGTH OF EDGE TO NEIGHBOR: " << current_node->mp_localNeighbors[ni]->getEdgeLength() << std::endl;
 			double potential_g = current_node->m_distFromStart + current_node->mp_localNeighbors[ni]->getEdgeLength();
 
@@ -81,13 +88,20 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 			}
 
 
+
 			// check if the neighbor (the node at the other end of the edge) has already been added to the queue
 			bool neighbor_in_queue = false;
 			for (int i = 0; i < int(p_openList.size()); i++)
 			{
 				if (current_node->mp_localNeighbors[ni]->m_node2 == p_openList[i])
 				{
-					//std::cout<<"NEIGHBOR IN QUEUE" <<std::endl;
+//					// DEBUG:
+//					if (current_node->mp_localNeighbors[ni]->m_node2 == n_goal)
+//					{
+//						std::cout<<"GOAL IS IN QUEUE" <<std::endl;
+//						std::cout<<"GOAL DIST FROM START: " << current_node->mp_localNeighbors[ni]->m_node2->m_distFromStart << std::endl;
+//					}
+
 					neighbor_in_queue = true;
 					break;
 				}
@@ -98,12 +112,6 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 			{
 				// Update parent
 				current_node->mp_localNeighbors[ni]->m_node2->mp_parent = current_node;
-
-				// DEBUG: Check if parent is null before setting edge
-//				if (current_node->mp_localNeighbors[ni]->m_node2->mp_parent == NULL)
-//				{
-//					std::cout<<"CURRENT NODE HAS NO PARENT"<< std::endl;
-//				}
 
 				// Create edge between neighbor and its parent
 				edge *e = new edge(current_node->mp_localNeighbors[ni]->m_node2, current_node->mp_localNeighbors[ni]->m_node2->mp_parent);
@@ -176,38 +184,61 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 		std::cout << "[ERROR][PARENT OF N_GOAL == NULL]" <<std::endl;
 		std::cout << "[******** NO PATH FOUND ********]" <<std::endl;
 	}
-	else
-	{
-		std::cout << "[PARENT OF N_GOAL NOT NULL!]" <<std::endl;
-
-	}
+//	else
+//	{
+//		std::cout << "[PARENT OF N_GOAL NOT NULL!]" <<std::endl;
+//
+//	}
 
 
 	// ======== GET THE PATH ========
 	std::vector<edge*> path;
 	node* current_node = n_goal;
 	double TOTAL_PATH_LENGTH = 0;
+
+	// ====== LOG PATH ======
+	std::ofstream PATH_LOG_FILE("PRMPath.csv");
+	PATH_LOG_FILE << "X" << "," << "Y" << "," << "PATH LENGTH\n";
+
 	while (current_node->mp_parent != NULL)
 	{
 
-		// Add the edge between the current node and its parent
-		path.push_back(current_node->getEdge(current_node->mp_parent));
+		PATH_LOG_FILE<< current_node->getX() << "," << current_node->getY() << "," << TOTAL_PATH_LENGTH << "\n";
 
-		TOTAL_PATH_LENGTH += current_node->getEdge(current_node->mp_parent)->m_edgeLength;
+
+
+		// Add the edge between the current node and its parent
+		//path.push_back(current_node->getEdge(current_node->mp_parent));
+
+		edge *path_edge = new edge(current_node, current_node->mp_parent);
+		// path.push_back(current_node->getEdge(current_node->mp_parent));
+		path.push_back(path_edge);
+
+		//TOTAL_PATH_LENGTH += current_node->getEdge(current_node->mp_parent)->m_edgeLength;
+		TOTAL_PATH_LENGTH += path_edge->m_edgeLength;
 
 		// Update the current node to its parent
 		current_node = current_node->mp_parent;
 	}
 
-	//return path;
+	// Plot the last node (this should be the start node)
+	PATH_LOG_FILE<< current_node->getX() << "," << current_node->getY() << "," << TOTAL_PATH_LENGTH << "\n";
 
-	return p_processedNodes;
+
+	PATH_LOG_FILE.close();
+
+	std::cout << "[TOTAL PATH LENGTH] " << TOTAL_PATH_LENGTH << std::endl;
+
+
+	return path;
+
+	//return p_processedNodes;
 
 
 }
 
 
-
+///// The following block of code was the first cut at this function /////
 
 //std::vector<edge*> AStarSearch(node* n_init, node* n_goal, graph* p_G)
 ////std::vector<edge*> AStarSearch(node* n_init, node* n_goal)
@@ -232,8 +263,6 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 //		}
 //	}
 //
-//
-//
 //	// ======== CONDUCT THE SEARCH ========
 //	// initialize the open list
 //	std::vector<node*> p_openList;
@@ -257,9 +286,6 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 //	while(!p_openList.empty())
 //	{
 //		NUM_ITERATIONS++;
-//
-//
-//
 //
 //		// DEBUG: check if n_goal is in open list
 //		for (int i=0; i<int(p_openList.size()); i++)
@@ -412,9 +438,6 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 //
 //	}// end while
 //
-//
-//
-//
 //		// ======== GENERATE PATH FROM BACK POINTERS ========
 //		// Path is from GOAL to START
 //		std::vector<edge*> path;
@@ -447,12 +470,9 @@ std::vector<node*> AStarSearch(node* n_init, node* n_goal)
 //			current_node = current_node->mp_parent;
 //		}
 //
-//
 //		return path;
-//
-//
 //}
-
+//////////////////////////////////////////////////////////////////////////////////////
 
 
 

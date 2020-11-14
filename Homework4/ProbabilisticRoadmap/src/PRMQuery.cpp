@@ -8,16 +8,18 @@
 
 #include "PRMQuery.hpp"
 
-// std::vector<edge*> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, node* n_init, node* n_goal, double r_neighborhood)
-std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, node* n_init, node* n_goal, double r_neighborhood)
+
+std::vector<edge*> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, node* n_init, node* n_goal, double r_neighborhood)
+
+//std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, node* n_init, node* n_goal, double r_neighborhood)
 {
 	std::vector<edge*> PRMPath;
 	// Add initial and goal nodes to the graph
 	p_graph->SetOfNodes.push_back(n_init);
 	p_graph->SetOfNodes.push_back(n_goal);
 
-//////////////////////////////////////////
 	// ==== CONNECT Q_INIT TO GRAPH ====
+//////////////////////////////////////////
 //	// Generate neighbors of Q_init
 //	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
 //	{
@@ -50,7 +52,7 @@ std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, 
 //	}
 //////////////////////////////////////////
 
-
+	// Get set of potential neighbors for n_init
 	std::vector<node*> n_init_potl_neighbors;
 	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
 	{
@@ -67,11 +69,12 @@ std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, 
 
 		}
 	}
-	// Find the closest neighbor
+	// Find the closest of all potential neighbors and use that to connect n_init to graph
 	node *nearest_init = n_init_potl_neighbors[0];
 	double dist_of_nearest_n_init = n_init->distance(n_init_potl_neighbors[0]);
 	for (int pn = 0; pn<int(n_init_potl_neighbors.size()); pn++)
 	{
+		// Distance to the current neighbor candidate
 		double dist_to_current_n = n_init->distance(n_init_potl_neighbors[pn]);
 			if (dist_to_current_n < dist_of_nearest_n_init)
 			{
@@ -80,28 +83,30 @@ std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, 
 			}
 
 	}
-	// Edge connecting node n_goal to neighbor n
-	edge *e_init = new edge(n_init, nearest_init);
-
 
 	// Add this node to the neighbors of node n_init
+	// Edge connecting node n_goal to neighbor n
+	edge *e_init = new edge(n_init, nearest_init);
+	p_graph->SetOfEdges.push_back(e_init);
 	n_init->mp_localNeighbors.push_back(e_init);
 
-	p_graph->SetOfEdges.push_back(e_init);
+
 
 	// Add n_goal to the neighbors of its neighbor
-	nearest_init->mp_localNeighbors.push_back(e_init);
+	edge *e_n_to_init = new edge(nearest_init, n_init);
+	p_graph->SetOfEdges.push_back(e_n_to_init);
+	nearest_init->mp_localNeighbors.push_back(e_n_to_init);
 
 	// DEBUG:
-	std::cout<<"[LENGTH OF EDGE CONENCTING INIT TO GRAPH] " << e_init->getEdgeLength() <<std::endl;
+	// std::cout<<"[LENGTH OF EDGE CONENCTING INIT TO GRAPH] " << e_init->getEdgeLength() <<std::endl;
 	// =================================
 
 
-	//std::cout<<"n_goal POS: " << n_goal->getX() << "," << n_goal->getY() <<std::endl;
 
 
+
+	// ==== CONNECT Q_GOAL TO GRAPH ====
 ////////////////////////////////////////
-//	// ==== CONNECT Q_GOAL TO GRAPH ====
 //	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
 //	{
 //
@@ -135,6 +140,7 @@ std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, 
 //	}
 ////////////////////////////////////////
 
+	// Set of potential neighbors for n_goal
 	std::vector<node*> n_goal_potl_neighbors;
 	for (int n = 0; n < int(p_graph->SetOfNodes.size()); n++)
 	{
@@ -165,29 +171,29 @@ std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, 
 
 	}
 
-
+	// Add this node to the neighbors of node n_init
 	// Edge connecting node n_goal to neighbor n
 	edge *e_goal = new edge(n_goal, nearest_goal);
 	p_graph->SetOfEdges.push_back(e_goal);
-
-	// Add this node to the neighbors of node n_init
 	n_goal->mp_localNeighbors.push_back(e_goal);
 
 
 	// Add n_goal to the neighbors of its neighbor
-	nearest_goal->mp_localNeighbors.push_back(e_goal);
+	// Edge connecting neighbor n to n_goal
+	edge *e_n_to_goal = new edge(nearest_goal, n_goal);
+	p_graph->SetOfEdges.push_back(e_n_to_goal);
+	nearest_goal->mp_localNeighbors.push_back(e_n_to_goal);
 
 	// DEBUG:
-//	std::cout<<"num neighbors n_goal: " << n_goal->mp_localNeighbors.size() << std::endl;
-//	std::cout<<"num neighbors of n_goal's neighbor: " << nearest_goal->mp_localNeighbors.size() << std::endl;
+	// std::cout<<"num neighbors n_goal: " << n_goal->mp_localNeighbors.size() << std::endl;
+	// std::cout<<"num neighbors of n_goal's neighbor: " << nearest_goal->mp_localNeighbors.size() << std::endl;
 
 	// DEBUG:
-	std::cout<<"[LENGTH OF EDGE CONENCTING GOAL TO GRAPH] " << e_goal->getEdgeLength() <<std::endl;
+	// std::cout<<"[LENGTH OF EDGE CONENCTING GOAL TO GRAPH] " << e_goal->getEdgeLength() <<std::endl;
 
 	// =================================
 
 
-	std::cout<<"[CONDUCTING A* SEARCH...]"<<std::endl;
 
 //	// DEBUG:
 //	for (int i = 0; i<int(p_graph->SetOfNodes.size()); i++)
@@ -222,13 +228,14 @@ std::vector<node *> PRMQuery(graph* p_graph, std::vector<RectangleObs> obs_vec, 
 //	}
 
 
+	std::cout<<"[CONDUCTING A* SEARCH...]"<<std::endl;
 
-	//PRMPath = AStarSearch(n_init, n_goal);
-	//return PRMPath;
+	PRMPath = AStarSearch(n_init, n_goal);
+	return PRMPath;
 
-
-	std::vector<node*> processed_nodes = AStarSearch(n_init, n_goal);
-
-	return processed_nodes;
+	// Using this definition of AStarSearch because the above definition was not working
+	// As a debug approach, I plotted the processed nodes from AStarSearch
+	//std::vector<node*> processed_nodes = AStarSearch(n_init, n_goal);
+	//return processed_nodes;
 
 }

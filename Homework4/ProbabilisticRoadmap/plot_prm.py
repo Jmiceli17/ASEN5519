@@ -24,24 +24,32 @@ if __name__ == "__main__":
 		fig1 = plt.figure(1)
 		axes1 = plt.gca()
 
-		plt.plot(data['X'], data['Y'], 'o')
+		try: 
+			# If the log file has "Path Length" in it, show it on the title
+			# Get metrics from the log file
 
-		# Get the number of nodes in the log file
-		num_nodes = len(data['X'])	
+			num_nodes = len(data['X'])	
+			path_length = data['PATH_LENGTH'][:][-1]	# Path length is the last number in the column
+			axes1.set_title('PRM GENERATED PATH\n Path Length: ' + str(path_length), fontsize=14)
+			axes1.grid(color='y', linestyle='--')
+			axes1.set_xlabel('X position (m)', fontsize=11)
+			axes1.set_ylabel('Y position (m)', fontsize=11)
 
-		# Labels
-		#axes1.set_title('Path Taken by Robot in 2 Dimensional Space \n(Workspace 1 from Exercise 7 of Homework 1)')
-		axes1.set_xlabel('X position (m)')
-		axes1.set_ylabel('Y position (m)')
+			plt.plot(data['X'], data['Y'], '-o')
+		# plt.show()
 
-		textstr = "Number of Nodes: " + str(num_nodes)
-		axes1.text(0.9, -0.05, textstr, transform=axes1.transAxes, fontsize=11,
-        verticalalignment='top')
+		except:
+			# Labels		
+			axes1.set_title('GENERATED NODES', fontsize=14)
+			axes1.set_xlabel('X position (m)', fontsize=11)
+			axes1.set_ylabel('Y position (m)', fontsize=11)
 
-		# Range for w-space
-		#axes1.set_xlim([0,11])
-		#axes1.set_ylim([-2,2])
+			textstr = "Number of Nodes: " + str(num_nodes)
+			axes1.text(0.9, -0.05, textstr, transform=axes1.transAxes, fontsize=11,
+	        verticalalignment='top')
 
-		axes1.grid(color='y', linestyle='--')
+			axes1.grid(color='y', linestyle='--')
+			plt.plot(data['X'], data['Y'], 'o')
 
+		
 		plt.show()

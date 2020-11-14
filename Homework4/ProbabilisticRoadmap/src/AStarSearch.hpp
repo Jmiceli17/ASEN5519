@@ -15,8 +15,11 @@
 #include "node.hpp"
 #include "graph.hpp"
 
-std::vector<node*> AStarSearch(node* n_init, node* n_goal);
-//std::vector<edge*> AStarSearch(node* n_init, node* n_goal);
+using namespace std;
+
+//std::vector<node*> AStarSearch(node* n_init, node* n_goal);
+
+std::vector<edge*> AStarSearch(node* n_init, node* n_goal);
 //std::vector<edge*> AStarSearch(node* n_init, node* n_goal, graph* p_G);
 
 

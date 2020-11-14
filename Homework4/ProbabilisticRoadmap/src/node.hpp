@@ -12,7 +12,6 @@
 
 #include "edge.hpp"
 #include "GetDistance.hpp"
-#include "pos2D.hpp"
 
 using namespace std;
 
@@ -21,20 +20,16 @@ class edge;
 class node
 {
 public:
-	//pos2D *mp_position;
-	double m_Xpos;
-	double m_Ypos;
-	double m_heuristic;									// heuristic value of this node (distance to goal)
-	double m_distFromStart;								// path length from q_start, NOTE this should be computed based on parents
-	double m_priority;									// f(n) = g(n) + h(n), the priority
-	bool m_nodeExplored;								// bool indicating if this node has already been visited
+	double m_Xpos;								// X position of node in c-space
+	double m_Ypos;								// Y position of node in c-space
+	double m_heuristic;							// heuristic value of this node (distance to goal)
+	double m_distFromStart;						// path length from q_start, NOTE this should be computed based on parents
+	double m_priority;							// f(n) = g(n) + h(n), the priority
+	bool m_nodeExplored;						// bool indicating if this node has already been visited
 
-
-	node *mp_parent; 					// Pointer to the parent node of this node (where it came from)
-	//std::vector<edge*> p_neighbors; 	// Vector of pointers to children of this node
-
+	node *mp_parent; 							// Pointer to the parent node of this node (where it came from)
+	std::vector<edge*> mp_localNeighbors;		//Vector of edges connecting this node to its local neighbors
 	// std::vector<node*> mp_localNeighbors;
-	std::vector<edge*> mp_localNeighbors;
 
 
 	// Constructors
@@ -57,8 +52,8 @@ public:
 	// Function for returning the edge connecting this node to another node
 	edge* getEdge(node* n);
 
-	// overload < operator to use "sort" method on nodes
-	bool operator < (const node& n)const;
+//	// overload < operator to use "sort" method on nodes
+//	bool operator < (const node& n)const;
 
 
 
